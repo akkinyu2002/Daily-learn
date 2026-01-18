@@ -1,0 +1,14 @@
+<h2>Your Notes</h2>
+
+<form method="post">
+    <input name="note" placeholder="Write note" required>
+    <button>Add</button>
+</form>
+
+<ul>
+    {% for note in notes %}
+    <li>{{ note.text }} <a href="/delete/{{ note._id }}">[x]</a></li>
+    {% endfor %}
+</ul>
+
+<a href="/logout">Logout</a>
