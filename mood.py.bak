@@ -1,0 +1,104 @@
+import requests
+import urllib.parse
+
+def get_mood_songs():
+    """Returns a dictionary of moods and their corresponding song lists (fallback)."""
+    return {
+        'happy': [
+            "Pharrell Williams - Happy",
+            "Justin Timberlake - Can't Stop the Feeling!",
+            "Katrina and the Waves - Walking on Sunshine",
+            "Mark Ronson ft. Bruno Mars - Uptown Funk"
+        ],
+        'sad': [
+            "Adele - Someone Like You",
+            "Coldplay - Fix You",
+            "Sam Smith - Stay With Me",
+            "Billie Eilish - when the party's over"
+        ],
+        'focused': [
+            "Lofi Girl - Study Beats",
+            "Hans Zimmer - Time",
+            "Ludovico Einaudi - Nuvole Bianche",
+            "Tycho - Awake"
+        ],
+        'energetic': [
+            "Survivor - Eye of the Tiger",
+            "Eminem - Lose Yourself",
+            "Queen - Don't Stop Me Now",
+            "The Weeknd - Blinding Lights"
+        ]
+    }
+
+def get_itunes_recommendations(mood):
+    """Fetches song recommendations from iTunes Search API based on mood."""
+    mood_terms = {
+        'happy': 'happy music',
+        'sad': 'sad songs',
+        'focused': 'study music',
+        'energetic': 'workout music'
+    }
+
+    if mood not in mood_terms:
+        return None
+
+    term = mood_terms[mood]
+    encoded_term = urllib.parse.quote(term)
+    url = f"https://itunes.apple.com/search?term={encoded_term}&media=music&entity=song&limit=5"
+
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        
+        tracks = []
+        if 'results' in data:
+            for result in data['results']:
+                track_name = result.get('trackName', 'Unknown Track')
+                artist_name = result.get('artistName', 'Unknown Artist')
+                tracks.append(f"{artist_name} - {track_name}")
+        
+        return tracks if tracks else None
+    except Exception as e:
+        print(f"Error fetching from iTunes: {e}")
+        return None
+
+def recommend_songs(mood):
+    """Prints song recommendations based on the given mood."""
+    mood = mood.lower().strip()
+    
+    # Try iTunes first
+    print(f"Searching online for '{mood}' songs...")
+    itunes_songs = get_itunes_recommendations(mood)
+    
+    if itunes_songs:
+        print(f"\nHere are some recommendations from iTunes for your '{mood}' mood:")
+        for song in itunes_songs:
+            print(f"- {song}")
+        return
+
+    # Fallback to local list
+    mood_songs = get_mood_songs()
+    if mood in mood_songs:
+        print(f"\nHere are some songs for your '{mood}' mood (Offline Fallback):")
+        for song in mood_songs[mood]:
+            print(f"- {song}")
+    else:
+        print(f"\nSorry, I don't have a playlist for '{mood}'.")
+        print("Try one of these: " + ", ".join(mood_songs.keys()))
+
+def main():
+    print("Welcome to the Mood-Based Music Recommender!")
+    print("Available moods: happy, sad, focused, energetic")
+    
+    while True:
+        user_input = input("\nHow are you feeling today? (or type 'exit' to quit): ")
+        
+        if user_input.lower() == 'exit':
+            print("Goodbye! Hope your mood improves!")
+            break
+            
+        recommend_songs(user_input)
+
+if __name__ == "__main__":
+    main()
