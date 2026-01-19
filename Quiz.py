@@ -116,15 +116,28 @@ class AdaptiveQuiz:
             self.questions = self.local_questions
             time.sleep(1)
 
-    def get_weighted_question(self):
+    def get_weighted_question(self, exclude_ids):
         if self.mode == "online" and len(self.questions) < 5:
             # Re-fetch if running low in online mode
             print("\nFetching more questions...")
             new_qs = self.fetch_api_questions(10)
             self.questions.extend(new_qs)
 
-        weights = [q['weight'] for q in self.questions]
-        return random.choices(self.questions, weights=weights, k=1)[0]
+        # Filter out questions already asked in this round
+        available_questions = [
+            q for i, q in enumerate(self.questions) 
+            if i not in exclude_ids
+        ]
+        
+        if not available_questions:
+            return None
+
+        weights = [q['weight'] for q in available_questions]
+        selected = random.choices(available_questions, weights=weights, k=1)[0]
+        
+        # Find the original index to return for exclusion
+        original_idx = self.questions.index(selected)
+        return selected, original_idx
 
     def run(self):
         while True:
@@ -132,9 +145,10 @@ class AdaptiveQuiz:
             self.score = 0
             self.total_asked = 0
             round_limit = 10
+            asked_indices = [] # Track indices of questions asked in this round
             
             print(f"\nWelcome to the Adaptive Quiz! \U0001f4ca")
-            print(f"You will be asked {round_limit} random questions.")
+            print(f"You will be asked {round_limit} unique random questions.")
             print("Wrong answers will repeat more often in future rounds!")
             time.sleep(1.5)
 
@@ -145,7 +159,13 @@ class AdaptiveQuiz:
                         print("No questions available!")
                         break
 
-                    q = self.get_weighted_question()
+                    result = self.get_weighted_question(asked_indices)
+                    if not result:
+                        print("No more unique questions available for this round!")
+                        break
+                    
+                    q, q_idx = result
+                    asked_indices.append(q_idx)
                     
                     print(f"Mode: {self.mode.upper()} | Question: {self.total_asked + 1}/{round_limit} | Score: {self.score}")
                     print(f"\nQuestion: {q['question']}")
