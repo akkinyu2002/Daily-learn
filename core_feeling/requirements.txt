@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+kivymd==1.1.1
+kivy
+openai
+sqlalchemy
+python-multipart
