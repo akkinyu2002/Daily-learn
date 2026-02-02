@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Search - Vulnerable App</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Search</h2>
+    <form method="GET">
+        <input type="text" name="q" placeholder="Search comments...">
+        <input type="submit" value="Search">
+    </form>
+
+    {% if query %}
+    <h3>Results for: {{ query | safe }}</h3>
+    <p>No results found (this is just a dummy search).</p>
+    {% endif %}
+
+    <p><a href="/">Back to Home</a></p>
+</body>
+
+</html>

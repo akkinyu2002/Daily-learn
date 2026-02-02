@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Vulnerable App</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+        .error { color: red; }
+        .hint { color: gray; font-size: 0.8em; margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;}
+    </style>
+</head>
+<body>
+    <h2>Login</h2>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+    <form method="POST">
+        <label>Username:</label><br>
+        <input type="text" name="username"><br><br>
+        <label>Password:</label><br>
+        <input type="password" name="password"><br><br>
+        <input type="submit" value="Login">
+    </form>
+    
+    <div class="hint">
+        <p><strong>Dev Note:</strong> The query is constructed as: <code>SELECT * FROM users WHERE username = '$user' AND password = '$pass'</code></p>
+    </div>
+    <p><a href="/">Back to Home</a> | <a href="/signup">Sign Up</a></p>
+</body>
+</html>
