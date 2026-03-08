@@ -40,6 +40,35 @@ def format_size(size_bytes):
     return f"{size_bytes:.2f} PB"
 
 
+def get_file_type(filepath):
+    """Return a human-readable file type based on extension."""
+    ext = os.path.splitext(filepath)[1].lower()
+    type_map = {
+        # Documents
+        ".pdf": "PDF", ".doc": "Document", ".docx": "Document",
+        ".txt": "Text", ".rtf": "Rich Text", ".odt": "Document",
+        ".xls": "Spreadsheet", ".xlsx": "Spreadsheet", ".csv": "CSV",
+        ".ppt": "Presentation", ".pptx": "Presentation",
+        # Images
+        ".jpg": "Image", ".jpeg": "Image", ".png": "Image",
+        ".gif": "Image", ".bmp": "Image", ".svg": "Image",
+        ".webp": "Image", ".ico": "Icon", ".tiff": "Image",
+        # Video
+        ".mp4": "Video", ".avi": "Video", ".mkv": "Video",
+        ".mov": "Video", ".wmv": "Video", ".flv": "Video", ".webm": "Video",
+        # Audio
+        ".mp3": "Audio", ".wav": "Audio", ".flac": "Audio",
+        ".aac": "Audio", ".ogg": "Audio", ".wma": "Audio",
+        # Archives
+        ".zip": "Archive", ".rar": "Archive", ".7z": "Archive",
+        ".tar": "Archive", ".gz": "Archive",
+        # Code
+        ".py": "Python", ".js": "JavaScript", ".html": "HTML",
+        ".css": "CSS", ".java": "Java", ".cpp": "C++",
+    }
+    return type_map.get(ext, ext.upper()[1:] if ext else "Unknown")
+
+
 def get_file_hash(filepath):
     """
     Compute the SHA-256 hash of a file's content.
@@ -184,12 +213,12 @@ def display_and_handle_duplicates(duplicates):
         print(f"  │  Recoverable space: {format_size(recoverable)}")
         print(f"  │")
         print(f"  │  ✅ KEEP: {keeper[0]}")
-        print(f"  │          Size: {format_size(keeper[1])}")
+        print(f"  │          Size: {format_size(keeper[1])}  |  Type: {get_file_type(keeper[0])}")
 
         for i, (path, size) in enumerate(to_delete):
             print(f"  │")
             print(f"  │  🗑️  DELETE candidate {i + 1}: {path}")
-            print(f"  │          Size: {format_size(size)}")
+            print(f"  │          Size: {format_size(size)}  |  Type: {get_file_type(path)}")
 
         print(f"  └{'─' * 50}\n")
 
@@ -197,6 +226,7 @@ def display_and_handle_duplicates(duplicates):
         for i, (path, size) in enumerate(to_delete):
             print(f"  ❓ Delete this duplicate?")
             print(f"     File : {path}")
+            print(f"     Type : {get_file_type(path)}")
             print(f"     Size : {format_size(size)}")
 
             while True:
