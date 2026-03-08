@@ -5,8 +5,13 @@ Detects duplicate files by comparing their content using SHA-256 hashing.
 Works with ALL file types: documents, images, videos, audio, PDFs, etc.
 Keeps the file with the highest size and asks permission to delete duplicates.
 
+Author  : Auto-generated
+Version : 1.0.0
+Date    : 2026-03-08
+
 Usage:
     python duplicate_finder.py
+    python duplicate_finder.py <directory_path>
 """
 
 import os
