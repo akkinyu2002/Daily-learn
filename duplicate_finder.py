@@ -60,16 +60,22 @@ def get_file_hash(filepath):
 
 
 def collect_files(directory):
-    """Recursively collect all files in a directory."""
+    """Recursively collect all files in a directory, skipping empty files."""
     files = []
+    skipped_empty = 0
     for root, _, filenames in os.walk(directory):
         for name in filenames:
             full_path = os.path.join(root, name)
             try:
                 size = os.path.getsize(full_path)
+                if size == 0:
+                    skipped_empty += 1
+                    continue
                 files.append((full_path, size))
             except OSError:
                 pass
+    if skipped_empty > 0:
+        print(f"         (Skipped {skipped_empty} empty files)")
     return files
 
 
