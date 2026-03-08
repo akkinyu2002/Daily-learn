@@ -130,9 +130,19 @@ def find_duplicates(directory):
     print(f"{'═' * 60}\n")
 
     # Step 1: Collect all files
-    print("  [1/3] Collecting files...")
+    print(f"  [1/3] Collecting files...")
     all_files = collect_files(directory)
-    print(f"         Found {len(all_files)} files.\n")
+    print(f"         Found {len(all_files)} files.")
+
+    # Show file type breakdown
+    if all_files:
+        type_counts = defaultdict(int)
+        for path, _ in all_files:
+            type_counts[get_file_type(path)] += 1
+        top_types = sorted(type_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        breakdown = ", ".join(f"{t}: {c}" for t, c in top_types)
+        print(f"         Types: {breakdown}")
+    print()
 
     if not all_files:
         print("  ❌  No files found in the specified directory.")
