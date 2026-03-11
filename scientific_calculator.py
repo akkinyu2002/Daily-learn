@@ -60,6 +60,7 @@ class ScientificCalculator:
         }
 
         self._build()
+        self._bind_keys()
 
     # ═══════════════════════ UI ═══════════════════════
 
@@ -158,10 +159,265 @@ class ScientificCalculator:
         for r in range(len(layout)):
             grid.rowconfigure(r, weight=1)
 
-    # ═══════════════════════ CLICK STUB ═════════════════
+    # ═══════════════════════ KEYBOARD ════════════════════
+
+    def _bind_keys(self):
+        self.root.bind("<Key>", self._key)
+        self.root.bind("<Return>", lambda e: self._click("="))
+        self.root.bind("<KP_Enter>", lambda e: self._click("="))
+        self.root.bind("<BackSpace>", lambda e: self._click("⌫"))
+        self.root.bind("<Escape>", lambda e: self._click("C"))
+        self.root.bind("<Delete>", lambda e: self._click("CE"))
+
+    def _key(self, ev):
+        k = ev.char
+        if k in "0123456789.()":
+            self._click(k)
+        elif k == "+": self._click("+")
+        elif k == "-": self._click("−")
+        elif k == "*": self._click("×")
+        elif k == "/": self._click("÷")
+        elif k == "%": self._click("%")
+        elif k == "^": self._click("xʸ")
+
+    # ═══════════════════════ CLICK DISPATCH ══════════════
 
     def _click(self, t):
-        pass  # will be implemented next
+        # ── Digits / dot ──
+        if t in "0123456789.":
+            self.expression = t if (self.expression == "0" and t != ".") else self.expression + t
+            return self._refresh()
+
+        # ── Parens ──
+        if t in ("(", ")"):
+            self.expression += t
+            return self._refresh()
+
+        # ── Operators ──
+        ops = {"+":"+", "−":"-", "×":"*", "÷":"/", "%":"%", "mod":"%"}
+        if t in ops:
+            self.expression += ops[t]
+            return self._refresh()
+
+        # ── Power ──
+        if t == "xʸ":
+            self.expression += "**"
+            return self._refresh()
+        if t == "x²":
+            self.expression += "**2"
+            return self._refresh()
+
+        # ── Constants ──
+        if t == "π":
+            self.expression += str(math.pi)
+            return self._refresh()
+        if t == "e":
+            self.expression += str(math.e)
+            return self._refresh()
+        if t == "Ans":
+            self.expression += str(self.ans)
+            return self._refresh()
+
+        # ── Functions ──
+        fmap = {
+            "sin":"sin","cos":"cos","tan":"tan",
+            "sinh":"sinh","cosh":"cosh","tanh":"tanh",
+            "log":"log10","ln":"log","√":"sqrt",
+            "n!":"factorial","|x|":"fabs","EXP":"exp",
+        }
+        inv_map = {"sin":"asin","cos":"acos","tan":"atan",
+                   "sinh":"asinh","cosh":"acosh","tanh":"atanh"}
+
+        if t in fmap:
+            fn = inv_map[t] if (self.inverse_mode and t in inv_map) else fmap[t]
+            self.expression += f"__{fn}__("
+            self.inverse_mode = False
+            self._upd_inv()
+            return self._refresh()
+
+        if t == "⌊x⌋":
+            self.expression += "__floor__("
+            return self._refresh()
+        if t == "⌈x⌉":
+            self.expression += "__ceil__("
+            return self._refresh()
+        if t == "1/x":
+            self.expression += "1/("
+            return self._refresh()
+
+        # ── Negate ──
+        if t == "±":
+            e = self.expression
+            if e.startswith("-") and e[1:].replace(".","").isdigit():
+                self.expression = e[1:]
+            elif e:
+                self.expression = f"-({e})"
+            else:
+                self.expression = "-"
+            return self._refresh()
+
+        # ── Clear ──
+        if t == "C":
+            self.expression = self.history = ""
+            self.hist_lbl.config(text="")
+            return self._refresh()
+        if t == "CE":
+            self.expression = ""
+            return self._refresh()
+
+        # ── Backspace ──
+        if t == "⌫":
+            tokens = [
+                "__asin__(","__acos__(","__atan__(",
+                "__asinh__(","__acosh__(","__atanh__(",
+                "__sin__(","__cos__(","__tan__(",
+                "__sinh__(","__cosh__(","__tanh__(",
+                "__log10__(","__log__(","__sqrt__(",
+                "__factorial__(","__fabs__(","__exp__(",
+                "__floor__(","__ceil__(",
+            ]
+            for tok in tokens:
+                if self.expression.endswith(tok):
+                    self.expression = self.expression[:-len(tok)]
+                    return self._refresh()
+            self.expression = self.expression[:-1]
+            return self._refresh()
+
+        # ── Memory ──
+        if t == "M+":
+            try:
+                self.memory += self._eval(self.expression)
+                self._upd_mem()
+            except Exception:
+                pass
+            return
+        if t == "MR":
+            self.expression += str(self.memory)
+            return self._refresh()
+        if t == "MC":
+            self.memory = 0
+            self._upd_mem()
+            return
+
+        # ── Equals ──
+        if t == "=":
+            return self._calc()
+
+    # ═══════════════════════ EVALUATION ══════════════════
+
+    def _calc(self):
+        if not self.expression:
+            return
+        try:
+            result = self._eval(self.expression)
+            self.history = self._pretty(self.expression) + " ="
+            self.hist_lbl.config(text=self.history)
+            self.ans = result
+
+            if isinstance(result, float):
+                if result == int(result) and abs(result) < 1e15:
+                    rs = str(int(result))
+                elif abs(result) > 1e15 or (abs(result) < 1e-6 and result != 0):
+                    rs = f"{result:.8e}"
+                else:
+                    rs = f"{result:.10g}"
+            else:
+                rs = str(result)
+
+            self.expression = rs
+            self._refresh()
+        except ZeroDivisionError:
+            self._error("Cannot divide by zero")
+        except ValueError as ve:
+            self._error(f"Math error")
+        except OverflowError:
+            self._error("Overflow")
+        except Exception:
+            self._error("Syntax error")
+
+    def _eval(self, expr):
+        # Auto-close parens
+        diff = expr.count("(") - expr.count(")")
+        if diff > 0:
+            expr += ")" * diff
+
+        deg = not self.radian_mode
+        ns = {"__builtins__": {}}
+
+        if deg:
+            ns["_sin"]  = lambda x: math.sin(math.radians(x))
+            ns["_cos"]  = lambda x: math.cos(math.radians(x))
+            ns["_tan"]  = lambda x: math.tan(math.radians(x))
+            ns["_asin"] = lambda x: math.degrees(math.asin(x))
+            ns["_acos"] = lambda x: math.degrees(math.acos(x))
+            ns["_atan"] = lambda x: math.degrees(math.atan(x))
+        else:
+            ns["_sin"]  = math.sin
+            ns["_cos"]  = math.cos
+            ns["_tan"]  = math.tan
+            ns["_asin"] = math.asin
+            ns["_acos"] = math.acos
+            ns["_atan"] = math.atan
+
+        ns["_sinh"]      = math.sinh
+        ns["_cosh"]      = math.cosh
+        ns["_tanh"]      = math.tanh
+        ns["_asinh"]     = math.asinh
+        ns["_acosh"]     = math.acosh
+        ns["_atanh"]     = math.atanh
+        ns["_log10"]     = math.log10
+        ns["_log"]       = math.log
+        ns["_sqrt"]      = math.sqrt
+        ns["_factorial"] = math.factorial
+        ns["_fabs"]      = math.fabs
+        ns["_exp"]       = math.exp
+        ns["_floor"]     = math.floor
+        ns["_ceil"]      = math.ceil
+
+        proc = expr
+        for tok in ["sin","cos","tan","asin","acos","atan",
+                     "sinh","cosh","tanh","asinh","acosh","atanh",
+                     "log10","log","sqrt","factorial","fabs",
+                     "exp","floor","ceil"]:
+            proc = proc.replace(f"__{tok}__", f"_{tok}")
+        return eval(proc, ns)
+
+    # ═══════════════════════ DISPLAY HELPERS ═════════════
+
+    def _pretty(self, e):
+        swaps = [
+            ("__sin__(","sin("),("__cos__(","cos("),("__tan__(","tan("),
+            ("__asin__(","sin⁻¹("),("__acos__(","cos⁻¹("),("__atan__(","tan⁻¹("),
+            ("__sinh__(","sinh("),("__cosh__(","cosh("),("__tanh__(","tanh("),
+            ("__asinh__(","sinh⁻¹("),("__acosh__(","cosh⁻¹("),("__atanh__(","tanh⁻¹("),
+            ("__log10__(","log("),("__log__(","ln("),
+            ("__sqrt__(","√("),("__factorial__(","fact("),
+            ("__fabs__(","|"),("__exp__(","exp("),
+            ("__floor__(","⌊"),("__ceil__(","⌈"),
+            ("**","^"),("*","×"),("/","÷"),
+        ]
+        for old, new in swaps:
+            e = e.replace(old, new)
+        return e
+
+    def _refresh(self):
+        txt = self._pretty(self.expression) if self.expression else "0"
+        self.disp_var.set(txt)
+        # Auto-scale font
+        n = len(txt)
+        if n > 24:
+            self.disp.config(font=tkfont.Font(family="Segoe UI", size=16, weight="bold"))
+        elif n > 16:
+            self.disp.config(font=tkfont.Font(family="Segoe UI", size=22, weight="bold"))
+        else:
+            self.disp.config(font=self.display_font)
+
+    def _error(self, msg):
+        self.disp_var.set(msg)
+        self.disp.config(fg="#f85149")
+        self.expression = ""
+        self.root.after(1800, lambda: self.disp.config(fg=self.C["disp_fg"]))
+        self.root.after(1800, self._refresh)
 
     # ═══════════════════════ MODE TOGGLES ════════════════
 
