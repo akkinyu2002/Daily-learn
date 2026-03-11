@@ -106,6 +106,63 @@ class ScientificCalculator:
                              anchor="e", padx=14)
         self.disp.pack(fill="x")
 
+        # ── Button grid ──
+        grid = tk.Frame(pad, bg=self.C["bg"])
+        grid.pack(fill="both", expand=True)
+
+        # Layout: (label, colspan, category)
+        layout = [
+            # Row 0 — trig / log
+            [("sin",1,"fn"),("cos",1,"fn"),("tan",1,"fn"),("log",1,"fn"),("ln",1,"fn"),("π",1,"sp")],
+            # Row 1 — power / roots
+            [("x²",1,"fn"),("xʸ",1,"fn"),("√",1,"fn"),("n!",1,"fn"),("e",1,"sp"),("(",1,"sp")],
+            # Row 2 — hyper / memory
+            [("sinh",1,"fn"),("cosh",1,"fn"),("tanh",1,"fn"),("M+",1,"fn"),("MR",1,"fn"),(")",1,"sp")],
+            # Row 3 — clear row
+            [("C",1,"cl"),("CE",1,"cl"),("⌫",1,"fn"),("%",1,"op"),("±",1,"fn"),("÷",1,"op")],
+            # Row 4
+            [("7",1,"num"),("8",1,"num"),("9",1,"num"),("×",1,"op"),("EXP",1,"fn"),("mod",1,"op")],
+            # Row 5
+            [("4",1,"num"),("5",1,"num"),("6",1,"num"),("−",1,"op"),("⌊x⌋",1,"fn"),("⌈x⌉",1,"fn")],
+            # Row 6
+            [("1",1,"num"),("2",1,"num"),("3",1,"num"),("+",1,"op"),("|x|",1,"fn"),("1/x",1,"fn")],
+            # Row 7
+            [("0",2,"num"),(".",1,"num"),("=",2,"eq"),("Ans",1,"sp")],
+        ]
+
+        cat_style = {
+            "num": (self.C["num_bg"], self.C["num_fg"], self.C["num_hv"], self.btn_font),
+            "op":  (self.C["op_bg"],  self.C["op_fg"],  self.C["op_hv"],  self.btn_font),
+            "fn":  (self.C["fn_bg"],  self.C["fn_fg"],  self.C["fn_hv"],  self.btn_font_sm),
+            "sp":  (self.C["sp_bg"],  self.C["sp_fg"],  self.C["sp_hv"],  self.btn_font_sm),
+            "eq":  (self.C["eq_bg"],  self.C["eq_fg"],  self.C["eq_hv"],  self.btn_font),
+            "cl":  (self.C["cl_bg"],  self.C["cl_fg"],  self.C["cl_hv"],  self.btn_font_sm),
+        }
+
+        for r, row in enumerate(layout):
+            c = 0
+            for (txt, span, cat) in row:
+                bg, fg, hv, fnt = cat_style[cat]
+                lbl = tk.Label(grid, text=txt, font=fnt, bg=bg, fg=fg,
+                               cursor="hand2", relief="flat", bd=0,
+                               padx=2, pady=12)
+                lbl.grid(row=r, column=c, columnspan=span,
+                         sticky="nsew", padx=2, pady=2, ipadx=2, ipady=2)
+                lbl.bind("<Enter>", lambda e, b=lbl, h=hv: b.config(bg=h))
+                lbl.bind("<Leave>", lambda e, b=lbl, o=bg: b.config(bg=o))
+                lbl.bind("<Button-1>", lambda e, t=txt: self._click(t))
+                c += span
+
+        for c in range(6):
+            grid.columnconfigure(c, weight=1, uniform="b")
+        for r in range(len(layout)):
+            grid.rowconfigure(r, weight=1)
+
+    # ═══════════════════════ CLICK STUB ═════════════════
+
+    def _click(self, t):
+        pass  # will be implemented next
+
     # ═══════════════════════ MODE TOGGLES ════════════════
 
     def _flip_angle(self):
