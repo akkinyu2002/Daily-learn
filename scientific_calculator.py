@@ -59,6 +59,70 @@ class ScientificCalculator:
             "dim":        "#484f58",
         }
 
+        self._build()
+
+    # ═══════════════════════ UI ═══════════════════════
+
+    def _build(self):
+        pad = tk.Frame(self.root, bg=self.C["bg"], padx=10, pady=10)
+        pad.pack(fill="both", expand=True)
+
+        # ── Mode bar ──
+        bar = tk.Frame(pad, bg=self.C["bg"])
+        bar.pack(fill="x", pady=(0, 6))
+
+        self.lbl_rad = tk.Label(bar, text="RAD", font=self.mode_font,
+                                bg=self.C["bg"], fg=self.C["accent"], cursor="hand2")
+        self.lbl_rad.pack(side="left", padx=(4, 2))
+        self.lbl_rad.bind("<Button-1>", lambda e: self._flip_angle())
+
+        self.lbl_deg = tk.Label(bar, text="DEG", font=self.mode_font,
+                                bg=self.C["bg"], fg=self.C["dim"], cursor="hand2")
+        self.lbl_deg.pack(side="left", padx=2)
+        self.lbl_deg.bind("<Button-1>", lambda e: self._flip_angle())
+
+        self.lbl_inv = tk.Label(bar, text="INV", font=self.mode_font,
+                                bg=self.C["bg"], fg=self.C["dim"], cursor="hand2")
+        self.lbl_inv.pack(side="left", padx=10)
+        self.lbl_inv.bind("<Button-1>", lambda e: self._flip_inv())
+
+        self.lbl_mem = tk.Label(bar, text="", font=self.mode_font,
+                                bg=self.C["bg"], fg=self.C["accent"])
+        self.lbl_mem.pack(side="right", padx=4)
+
+        # ── Display ──
+        dsp = tk.Frame(pad, bg=self.C["disp_bg"], bd=0, highlightthickness=1,
+                       highlightbackground="#30363d")
+        dsp.pack(fill="x", pady=(0, 10), ipady=10)
+
+        self.hist_lbl = tk.Label(dsp, text="", font=self.history_font,
+                                 bg=self.C["disp_bg"], fg=self.C["hist_fg"],
+                                 anchor="e", padx=14)
+        self.hist_lbl.pack(fill="x")
+
+        self.disp_var = tk.StringVar(value="0")
+        self.disp = tk.Label(dsp, textvariable=self.disp_var, font=self.display_font,
+                             bg=self.C["disp_bg"], fg=self.C["disp_fg"],
+                             anchor="e", padx=14)
+        self.disp.pack(fill="x")
+
+    # ═══════════════════════ MODE TOGGLES ════════════════
+
+    def _flip_angle(self):
+        self.radian_mode = not self.radian_mode
+        self.lbl_rad.config(fg=self.C["accent"] if self.radian_mode else self.C["dim"])
+        self.lbl_deg.config(fg=self.C["dim"]    if self.radian_mode else self.C["accent"])
+
+    def _flip_inv(self):
+        self.inverse_mode = not self.inverse_mode
+        self._upd_inv()
+
+    def _upd_inv(self):
+        self.lbl_inv.config(fg=self.C["accent"] if self.inverse_mode else self.C["dim"])
+
+    def _upd_mem(self):
+        self.lbl_mem.config(text=f"M={self.memory:.6g}" if self.memory else "")
+
 
 # ═══════════════════════ MAIN ═══════════════════════════
 
