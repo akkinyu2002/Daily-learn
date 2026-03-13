@@ -34,3 +34,13 @@ def protect_pdf(input_pdf_path, output_pdf_path, password):
         
     except Exception as e:
         print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    if len(sys.argv) == 4:
+        input_file = sys.argv[1]
+        output_file = sys.argv[2]
+        password = sys.argv[3]
+        protect_pdf(input_file, output_file, password)
+    else:
+        print("Usage: python password_protect_pdf.py <input_pdf> <output_pdf> <password>")
+        print("Example: python password_protect_pdf.py my_doc.pdf protected_doc.pdf mySecretPassword")
