@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Chai & Co. — A cafe in Banjara Hills, Hyderabad. Irani chai, coffee, shawarma, burgers, momos and more. Dine-in or order for delivery." />
+  <title>Chai & Co. — Cafe in Hyderabad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- WhatsApp Button -->
+  <a href="https://wa.me/919876543210?text=Hi,%20I'd%20like%20to%20place%20an%20order" class="whatsapp-float"
+    target="_blank" rel="noopener noreferrer" aria-label="Order on WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="white">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+    <span>WhatsApp us</span>
+  </a>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-sidebar" id="cartSidebar" aria-label="Your Order Cart">
+    <div class="cart-header">
+      <h2>Your Order</h2>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <span>🛒</span>
+        <p>Nothing here yet.<br />Pick something from the menu!</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotal">₹0</span>
+      </div>
+      <button class="btn-primary btn-full" id="placeOrderBtn">Place Order</button>
+    </div>
+  </aside>
+
+  <!-- Order Confirmation -->
+  <div class="modal-overlay" id="orderModal" style="display:none">
+    <div class="modal-box">
+      <div class="modal-icon">✅</div>
+      <h3>Order Placed!</h3>
+      <p>Thanks for ordering. We'll give you a call to confirm.</p>
+      <p class="modal-detail" id="orderDetail"></p>
+      <button class="btn-primary" onclick="closeOrderModal()">Got it</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar" id="navbar">
+    <a href="#" class="nav-logo" aria-label="Home">
+      <span class="logo-icon">☕</span>
+      <span class="logo-text">Chai <span class="ampersand">&</span> Co.</span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="#menu" class="nav-link">Menu</a>
+      <a href="#hyderabad" class="nav-link">About</a>
+      <a href="#testimonials" class="nav-link">Reviews</a>
+      <a href="#reservation" class="nav-link">Reserve</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <button class="btn-primary btn-nav" id="cartBtn" aria-label="Open cart">
+        🛒 Cart <span class="cart-count" id="cartCount" style="display:none">0</span>
+      </button>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-bg">
+        <img src="assets/hero.png" alt="Inside Chai and Co. cafe" class="hero-img" loading="eager" />
+      </div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Banjara Hills, Hyderabad</p>
+        <h1 class="hero-title">Good chai. Great coffee.<br />Food you'll come back for.</h1>
+        <p class="hero-sub">
+          A neighbourhood cafe in the heart of Hyderabad. Irani chai, fresh espresso, shawarma, burgers, and homemade
+          desserts. Dine in or get it delivered.
+        </p>
+        <div class="hero-ctas">
+          <a href="#menu" class="btn-primary btn-large">See Our Menu</a>
+          <a href="#reservation" class="btn-outline btn-large">Book a Table</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ticker -->
+    <div class="ticker-wrap" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Open 8am – 11pm daily</span>
+        <span>•</span>
+        <span>Delivery available across Hyderabad</span>
+        <span>•</span>
+        <span>Walk-ins welcome</span>
+        <span>•</span>
+        <span>Reservations for groups</span>
+        <span>•</span>
+        <span>Open 8am – 11pm daily</span>
+        <span>•</span>
+        <span>Delivery available across Hyderabad</span>
+        <span>•</span>
+        <span>Walk-ins welcome</span>
+        <span>•</span>
+        <span>Reservations for groups</span>
+        <span>•</span>
+      </div>
+    </div>
+
+    <!-- Popular Items -->
+    <section class="featured-section" id="featured">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-eyebrow">Popular</p>
+          <h2 class="section-title">What people usually order</h2>
+        </div>
+        <div class="featured-scroll" id="featuredScroll">
+
+          <article class="featured-card">
+            <div class="featured-card-img" style="background:#f5e6d3">
+              <span class="item-emoji">🍵</span>
+            </div>
+            <div class="featured-card-body">
+              <span class="badge-tag">Bestseller</span>
+              <h3>Irani Chai</h3>
+              <p>Our classic Irani chai — full cream milk, cardamom, slow-brewed</p>
+              <div class="featured-card-foot">
+                <span class="price">₹49</span>
+                <button class="btn-add" onclick="addToCart('Irani Chai', 49)">+ Add</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-card">
+            <div class="featured-card-img" style="background:#e8ddd4">
+              <span class="item-emoji">☕</span>
+            </div>
+            <div class="featured-card-body">
+              <span class="badge-tag">Popular</span>
+              <h3>Cold Coffee</h3>
+              <p>Double shot espresso, vanilla, whipped cream on top</p>
+              <div class="featured-card-foot">
+                <span class="price">₹169</span>
+                <button class="btn-add" onclick="addToCart('Cold Coffee', 169)">+ Add</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-card">
+            <div class="featured-card-img" style="background:#f0e2d4">
+              <span class="item-emoji">🌯</span>
+            </div>
+            <div class="featured-card-body">
+              <span class="badge-tag">Top pick</span>
+              <h3>Chicken Shawarma</h3>
+              <p>Marinated chicken, garlic sauce, pickled veggies in a wrap</p>
+              <div class="featured-card-foot">
+                <span class="price">₹179</span>
+                <button class="btn-add" onclick="addToCart('Chicken Shawarma', 179)">+ Add</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-card">
+            <div class="featured-card-img" style="background:#f5ead4">
+              <span class="item-emoji">🍟</span>
+            </div>
+            <div class="featured-card-body">
+              <h3>Loaded Fries</h3>
+              <p>Crispy fries with cheese, jalapeños, sour cream</p>
+              <div class="featured-card-foot">
+                <span class="price">₹179</span>
+                <button class="btn-add" onclick="addToCart('Loaded Fries', 179)">+ Add</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-card">
+            <div class="featured-card-img" style="background:#f0e5db">
+              <span class="item-emoji">🍰</span>
+            </div>
+            <div class="featured-card-body">
+              <h3>Cheesecake</h3>
+              <p>New York style, cream cheese, graham cracker base</p>
+              <div class="featured-card-foot">
+                <span class="price">₹149</span>
+                <button class="btn-add" onclick="addToCart('NY Cheesecake', 149)">+ Add</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="featured-card">
+            <div class="featured-card-img" style="background:#e8ddd4">
+              <span class="item-emoji">🍔</span>
+            </div>
+            <div class="featured-card-body">
+              <h3>Smash Burger</h3>
+              <p>Beef patty, cheese, caramelized onions, special sauce</p>
+              <div class="featured-card-foot">
+                <span class="price">₹219</span>
+                <button class="btn-add" onclick="addToCart('Smash Burger', 219)">+ Add</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="hyd-section" id="hyderabad">
+      <div class="container hyd-grid">
+        <div class="hyd-image-side">
+          <img src="assets/food-spread.png" alt="Food at Chai and Co." class="hyd-img" loading="lazy" />
+        </div>
+        <div class="hyd-text-side">
+          <p class="section-eyebrow">About Us</p>
+          <h2 class="section-title">A cafe for everyone</h2>
+          <p class="hyd-para">
+            We started Chai & Co. because we wanted a place in Hyderabad where you could get proper Irani chai
+            <em>and</em> a good espresso under the same roof. Add some shawarma, burgers, momos, and homemade desserts —
+            and that's us.
+          </p>
+          <p class="hyd-para">
+            We're in Banjara Hills. The vibe is casual. Prices are fair. Everything is made fresh. Whether you're
+            grabbing a quick chai or sitting down for a long lunch, you're welcome.
+          </p>
+          <div class="hyd-highlights">
+            <div class="highlight-item">
+              <span class="highlight-num">40+</span>
+              <span>Items on the menu</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-num">8am–11pm</span>
+              <span>Open every day</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-num">4.8 ⭐</span>
+              <span>On Google</span>
+            </div>
+          </div>
+          <a href="#menu" class="btn-primary">View Menu</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Full Menu -->
+    <section class="menu-section" id="menu">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Menu</h2>
+          <p class="menu-subtitle">All prices in INR. Everything made fresh daily.</p>
+        </div>
+
+        <div class="menu-tabs" role="tablist" aria-label="Menu categories">
+          <button class="menu-tab active" role="tab" data-cat="all" aria-selected="true">All</button>
+          <button class="menu-tab" role="tab" data-cat="hyd" aria-selected="false">Chai & Snacks</button>
+          <button class="menu-tab" role="tab" data-cat="coffee" aria-selected="false">Coffee</button>
+          <button class="menu-tab" role="tab" data-cat="bites" aria-selected="false">Food</button>
+          <button class="menu-tab" role="tab" data-cat="desserts" aria-selected="false">Desserts</button>
+          <button class="menu-tab" role="tab" data-cat="specials" aria-selected="false">Combos</button>
+        </div>
+
+        <div class="menu-grid" id="menuGrid">
+
+          <!-- Chai & Snacks -->
+          <div class="menu-item" data-cat="hyd">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Irani Chai</h4>
+                <p>Full cream milk, cardamom, rose water, slow-brewed</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹49</span>
+              <button class="btn-add-sm" onclick="addToCart('Irani Chai', 49)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="hyd">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Bun Maska</h4>
+                <p>Toasted Irani bun with butter</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹39</span>
+              <button class="btn-add-sm" onclick="addToCart('Bun Maska', 39)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="hyd">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Osmania Biscuits (6 pcs)</h4>
+                <p>Traditional Hyderabadi biscuits, goes great with tea</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹49</span>
+              <button class="btn-add-sm" onclick="addToCart('Osmania Biscuits', 49)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="hyd">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Chai + Bun Maska Combo</h4>
+                <p>One Irani chai and one bun maska</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹79</span>
+              <span class="price-orig">₹88</span>
+              <button class="btn-add-sm" onclick="addToCart('Chai + Bun Maska Combo', 79)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="hyd">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Double Ka Meetha Shake</h4>
+                <p>Hyderabadi dessert turned into a thick milkshake</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹149</span>
+              <button class="btn-add-sm" onclick="addToCart('Double Ka Meetha Shake', 149)">+</button>
+            </div>
+          </div>
+
+          <!-- Coffee -->
+          <div class="menu-item" data-cat="coffee">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Espresso</h4>
+                <p>Single shot, freshly pulled</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹99</span>
+              <button class="btn-add-sm" onclick="addToCart('Espresso', 99)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="coffee">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Americano</h4>
+                <p>Double shot espresso with hot water</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹129</span>
+              <button class="btn-add-sm" onclick="addToCart('Americano', 129)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="coffee">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Cappuccino</h4>
+                <p>Double shot with foamed milk</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹149</span>
+              <button class="btn-add-sm" onclick="addToCart('Cappuccino', 149)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="coffee">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Flat White</h4>
+                <p>Ristretto with steamed milk, smooth</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹159</span>
+              <button class="btn-add-sm" onclick="addToCart('Flat White', 159)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="coffee">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Cold Coffee</h4>
+                <p>Double shot, vanilla, whipped cream</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹169</span>
+              <button class="btn-add-sm" onclick="addToCart('Cold Coffee', 169)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="coffee">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Cold Brew</h4>
+                <p>18-hour brewed, served over ice</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹179</span>
+              <button class="btn-add-sm" onclick="addToCart('Cold Brew', 179)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="coffee">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Dalgona Coffee</h4>
+                <p>Whipped coffee on chilled milk</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹169</span>
+              <button class="btn-add-sm" onclick="addToCart('Dalgona Coffee', 169)">+</button>
+            </div>
+          </div>
+
+          <!-- Food -->
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark non-veg">●</span>
+              <div>
+                <h4>Chicken Shawarma</h4>
+                <p>Marinated chicken wrap with garlic sauce and pickled veggies</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹179</span>
+              <button class="btn-add-sm" onclick="addToCart('Chicken Shawarma', 179)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Falafel Shawarma</h4>
+                <p>Crispy falafel with tahini and pickles in a wrap</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹149</span>
+              <button class="btn-add-sm" onclick="addToCart('Falafel Shawarma', 149)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark non-veg">●</span>
+              <div>
+                <h4>Smash Burger</h4>
+                <p>Beef patty, cheese, caramelized onions, house sauce</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹219</span>
+              <button class="btn-add-sm" onclick="addToCart('Smash Burger', 219)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Veg Burger</h4>
+                <p>Crispy veg patty, slaw, pickles, on a brioche bun</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹169</span>
+              <button class="btn-add-sm" onclick="addToCart('Veg Burger', 169)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark non-veg">●</span>
+              <div>
+                <h4>Chicken Momos (8 pcs)</h4>
+                <p>Steamed, served with schezwan chutney</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹179</span>
+              <button class="btn-add-sm" onclick="addToCart('Chicken Momos', 179)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Veg Momos (8 pcs)</h4>
+                <p>Mixed veg filling, peri-peri dip</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹149</span>
+              <button class="btn-add-sm" onclick="addToCart('Veg Momos', 149)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Loaded Fries</h4>
+                <p>Fries with cheese sauce, jalapeños, sour cream</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹179</span>
+              <button class="btn-add-sm" onclick="addToCart('Loaded Fries', 179)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Cheesy Fries</h4>
+                <p>Fries with melted cheddar</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹159</span>
+              <button class="btn-add-sm" onclick="addToCart('Cheesy Fries', 159)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark non-veg">●</span>
+              <div>
+                <h4>Chicken Tikka Sandwich</h4>
+                <p>Grilled chicken, mint chutney, pickled onions on sourdough</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹199</span>
+              <button class="btn-add-sm" onclick="addToCart('Chicken Tikka Sandwich', 199)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="bites">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Club Sandwich</h4>
+                <p>Egg, cheese, veggies, honey mustard, triple-layered</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹189</span>
+              <button class="btn-add-sm" onclick="addToCart('Club Sandwich', 189)">+</button>
+            </div>
+          </div>
+
+          <!-- Desserts -->
+          <div class="menu-item" data-cat="desserts">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>NY Cheesecake</h4>
+                <p>Classic cheesecake with a graham cracker base</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹149</span>
+              <button class="btn-add-sm" onclick="addToCart('NY Cheesecake', 149)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="desserts">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Chocolate Brownie</h4>
+                <p>Gooey brownie with chocolate sauce</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹99</span>
+              <button class="btn-add-sm" onclick="addToCart('Chocolate Brownie', 99)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="desserts">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Butter Croissant</h4>
+                <p>Flaky croissant, freshly baked</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹99</span>
+              <button class="btn-add-sm" onclick="addToCart('Butter Croissant', 99)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item" data-cat="desserts">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Seasonal Pastry</h4>
+                <p>Ask us what's fresh today</p>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹119</span>
+              <button class="btn-add-sm" onclick="addToCart('Seasonal Pastry', 119)">+</button>
+            </div>
+          </div>
+
+          <!-- Combos -->
+          <div class="menu-item special-item" data-cat="specials">
+            <div class="menu-item-info">
+              <span class="veg-mark non-veg">●</span>
+              <div>
+                <h4>Smash Box</h4>
+                <p>Smash Burger + Loaded Fries + Cold Coffee</p>
+                <span class="badge-tag">Combo</span>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹449</span>
+              <span class="price-orig">₹567</span>
+              <button class="btn-add-sm" onclick="addToCart('Smash Box', 449)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item special-item" data-cat="specials">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Chai Combo</h4>
+                <p>Irani Chai + Bun Maska + 6 Osmania Biscuits</p>
+                <span class="badge-tag">Combo</span>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹119</span>
+              <span class="price-orig">₹137</span>
+              <button class="btn-add-sm" onclick="addToCart('Chai Combo', 119)">+</button>
+            </div>
+          </div>
+
+          <div class="menu-item special-item" data-cat="specials">
+            <div class="menu-item-info">
+              <span class="veg-mark veg">●</span>
+              <div>
+                <h4>Brunch Set</h4>
+                <p>Cold Coffee + Club Sandwich + Cheesecake</p>
+                <span class="badge-tag">Weekend special</span>
+              </div>
+            </div>
+            <div class="menu-item-right">
+              <span class="item-price">₹449</span>
+              <span class="price-orig">₹507</span>
+              <button class="btn-add-sm" onclick="addToCart('Brunch Set', 449)">+</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="menu-cta-bar">
+          <button class="btn-primary btn-large" id="viewCartBtn">🛒 View Cart</button>
+          <a href="https://wa.me/919876543210?text=Hi,%20I'd%20like%20to%20order" target="_blank"
+            class="btn-outline btn-large">Order on WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">What our customers say</h2>
+        </div>
+        <div class="testimonials-grid">
+
+          <blockquote class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"Really good Irani chai. Tastes like what you get near Charminar. Bun maska was fresh too."</p>
+            <footer><strong>Rishika T.</strong><small>Banjara Hills</small></footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"The smash burger is solid. We come here almost every weekend now. Cold coffee is also great."</p>
+            <footer><strong>Arjun M.</strong><small>HITEC City</small></footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"Took my team here for lunch. Everyone liked it. Cheesecake was really nice."</p>
+            <footer><strong>Priya K.</strong><small>Kondapur</small></footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐</div>
+            <p>"Ordered shawarma on Swiggy. Came hot and tasted fresh. Pretty fast delivery too."</p>
+            <footer><strong>Mohammed F.</strong><small>Jubilee Hills</small></footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card featured-review">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"This place is a nice addition to Banjara Hills. Not too expensive, food is consistently good. The momos
+              and loaded fries are my usual order."</p>
+            <footer><strong>Zara A.</strong><small>Regular customer</small></footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"Good place to sit and work. WiFi is decent, chai keeps coming. We usually spend 2-3 hours here."</p>
+            <footer><strong>Kavya S.</strong><small>Student</small></footer>
+          </blockquote>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Reservation -->
+    <section class="reservation-section" id="reservation">
+      <div class="container reservation-grid">
+        <div class="reservation-text">
+          <p class="section-eyebrow">Reserve</p>
+          <h2 class="section-title">Book a table</h2>
+          <p>We can seat up to 6 people per reservation. For bigger groups, just WhatsApp or call us.</p>
+          <ul class="res-info">
+            <li>📍 Ground Floor, Tower B, Road No. 36, Banjara Hills, Hyderabad — 500034</li>
+            <li>🕗 Open Mon–Sun, 8:00 AM to 11:00 PM</li>
+            <li>📞 +91 98765 43210</li>
+            <li>Last reservation at 10:00 PM</li>
+          </ul>
+        </div>
+        <form class="reservation-form" id="reservationForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="resName">Name *</label>
+              <input type="text" id="resName" name="name" placeholder="Your name" required />
+            </div>
+            <div class="form-group">
+              <label for="resPhone">Phone *</label>
+              <input type="tel" id="resPhone" name="phone" placeholder="+91 98765 43210" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="resDate">Date *</label>
+              <input type="date" id="resDate" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="resTime">Time *</label>
+              <select id="resTime" name="time" required>
+                <option value="">Select time</option>
+                <option>08:00 AM</option>
+                <option>09:00 AM</option>
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>12:00 PM</option>
+                <option>01:00 PM</option>
+                <option>02:00 PM</option>
+                <option>03:00 PM</option>
+                <option>04:00 PM</option>
+                <option>05:00 PM</option>
+                <option>06:00 PM</option>
+                <option>07:00 PM</option>
+                <option>08:00 PM</option>
+                <option>09:00 PM</option>
+                <option>10:00 PM</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="resGuests">Guests *</label>
+              <select id="resGuests" name="guests" required>
+                <option value="">Select</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="resOccasion">Occasion</label>
+              <select id="resOccasion" name="occasion">
+                <option value="">None</option>
+                <option>Birthday</option>
+                <option>Anniversary</option>
+                <option>Meeting</option>
+                <option>Date</option>
+                <option>Hangout</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="resNotes">Any special requests?</label>
+            <textarea id="resNotes" name="notes" rows="3"
+              placeholder="Dietary needs, seating preferences, etc."></textarea>
+          </div>
+          <button type="submit" class="btn-primary btn-full" id="resSubmitBtn">Reserve</button>
+          <p class="form-note">We'll confirm on WhatsApp within 30 minutes.</p>
+          <div class="form-msg" id="resMsg" style="display:none"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact-section" id="contact">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Find us</h2>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-cards">
+            <div class="contact-card">
+              <span class="contact-icon">📍</span>
+              <div>
+                <h4>Address</h4>
+                <p>Ground Floor, Tower B<br />Road No. 36, Banjara Hills<br />Hyderabad — 500034</p>
+              </div>
+            </div>
+            <div class="contact-card">
+              <span class="contact-icon">🕗</span>
+              <div>
+                <h4>Hours</h4>
+                <p>Monday to Sunday<br />8:00 AM – 11:00 PM<br />Kitchen closes at 10:30 PM</p>
+              </div>
+            </div>
+            <div class="contact-card">
+              <span class="contact-icon">📞</span>
+              <div>
+                <h4>Contact</h4>
+                <p><a href="tel:+919876543210">+91 98765 43210</a><br /><a
+                    href="mailto:hello@chaiandco.in">hello@chaiandco.in</a></p>
+              </div>
+            </div>
+            <div class="contact-card">
+              <span class="contact-icon">🛵</span>
+              <div>
+                <h4>Delivery</h4>
+                <p>Available on Zomato & Swiggy<br />or WhatsApp us directly</p>
+              </div>
+            </div>
+          </div>
+          <div class="map-wrapper">
+            <iframe title="Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d60900.61834614!2d78.4072!3d17.4125!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb972b9a7c52c7%3A0x1e18f4c59898dd62!2sBanjara%20Hills%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+              width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap">
+          <h3>Send us a message</h3>
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ctName">Name *</label>
+                <input type="text" id="ctName" name="name" placeholder="Your name" required />
+              </div>
+              <div class="form-group">
+                <label for="ctEmail">Email *</label>
+                <input type="email" id="ctEmail" name="email" placeholder="you@email.com" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="ctSubject">Subject</label>
+              <input type="text" id="ctSubject" name="subject" placeholder="What's this about?" />
+            </div>
+            <div class="form-group">
+              <label for="ctMessage">Message *</label>
+              <textarea id="ctMessage" name="message" rows="4" required placeholder="Your message"></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Send</button>
+            <div class="form-msg" id="ctMsg" style="display:none"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo footer-logo">
+          <span class="logo-icon">☕</span>
+          <span class="logo-text">Chai <span class="ampersand">&</span> Co.</span>
+        </a>
+        <p>A neighbourhood cafe in Banjara Hills, Hyderabad. Chai, coffee, food, and good vibes.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Instagram" class="social-link">📷</a>
+          <a href="#" aria-label="Facebook" class="social-link">📘</a>
+          <a href="https://wa.me/919876543210" aria-label="WhatsApp" class="social-link">💬</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#hyderabad">About</a></li>
+          <li><a href="#reservation">Reserve</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Order</h4>
+        <ul>
+          <li><a href="https://wa.me/919876543210" target="_blank">WhatsApp</a></li>
+          <li><a href="#">Swiggy</a></li>
+          <li><a href="#">Zomato</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Info</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Chai & Co. · Hyderabad</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

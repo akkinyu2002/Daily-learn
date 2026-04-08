@@ -1,0 +1,127 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid transparent;
+}
+
+.navbar.glass {
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+}
+
+.logo-icon {
+    color: var(--accent-color);
+}
+
+.highlight {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 2.5rem;
+}
+
+.nav-item {
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    position: relative;
+    font-family: var(--font-main);
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+    color: var(--primary-color);
+}
+
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gradient-accent);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 2px;
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
+
+.menu-icon {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary-color);
+}
+
+@media screen and (max-width: 768px) {
+    .navbar {
+        height: 60px;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
+        position: absolute;
+        top: 60px;
+        left: -100%;
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        align-items: center;
+        justify-content: center;
+        gap: 2.5rem;
+        background: rgba(10, 10, 10, 0.98);
+        backdrop-filter: blur(12px);
+    }
+
+    .nav-menu.active {
+        left: 0;
+        opacity: 1;
+        z-index: 1;
+    }
+
+    .menu-icon {
+        display: block;
+    }
+
+    .nav-item {
+        font-size: 1.1rem;
+    }
+}
