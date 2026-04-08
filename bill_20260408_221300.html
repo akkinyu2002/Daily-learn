@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice INV-20260408-084509</title>
+  <style>
+    :root {
+      --ink: #222;
+      --muted: #616161;
+      --line: #d7d7d7;
+      --paper: #ffffff;
+      --accent: #0f5a4b;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #f2f3f5;
+      color: var(--ink);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      padding: 32px 16px;
+    }
+    .invoice {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
+    }
+    .header {
+      background: #f8fbfa;
+      border-bottom: 2px solid var(--accent);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .shop h1 {
+      font-size: 24px;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+    }
+    .shop p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .meta p {
+      font-size: 14px;
+      margin-bottom: 4px;
+      text-align: right;
+    }
+    .section {
+      padding: 18px 24px 0;
+    }
+    .customer {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: left;
+    }
+    th {
+      background: #fafafa;
+      color: #333;
+      font-weight: 600;
+    }
+    .num {
+      text-align: right;
+    }
+    .totals {
+      max-width: 340px;
+      margin: 16px 0 24px auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .totals .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .totals .row:last-child {
+      border-bottom: none;
+      background: #f4faf8;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .footer {
+      border-top: 1px dashed var(--line);
+      text-align: center;
+      padding: 14px 18px 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .invoice {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice">
+    <div class="header">
+      <div class="shop">
+        <h1>CITY MART</h1>
+        <p>221B Market Street, Kathmandu</p>
+        <p>Phone: +977-9800000000</p>
+      </div>
+      <div class="meta">
+        <p><strong>Invoice No:</strong> INV-20260408-084509</p>
+        <p><strong>Date:</strong> 2026-04-08 22:13:00</p>
+        <p><strong>Customer:</strong> John Doe</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 8%;">No</th>
+            <th style="width: 42%;">Item</th>
+            <th style="width: 12%;" class="num">Qty</th>
+            <th style="width: 18%;" class="num">Price</th>
+            <th style="width: 20%;" class="num">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Milk</td><td class='num'>2</td><td class='num'>60.00</td><td class='num'>120.00</td></tr><tr><td>2</td><td>Bread</td><td class='num'>1</td><td class='num'>45.00</td><td class='num'>45.00</td></tr>
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div class="row"><span>Subtotal</span><span>165.00</span></div>
+        <div class="row"><span>VAT (13%)</span><span>21.45</span></div>
+        <div class="row"><span>Grand Total</span><span>186.45</span></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Thank you for shopping with us.
+    </div>
+  </div>
+</body>
+</html>
