@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Changer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .red {
+            background-color: red;
+        }
+        .green {
+            background-color: green;
+        }
+        .black {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="hello-world">Hello World</h1>
+    <button class="button red" id="red-button">Red</button>
+    <button class="button green" id="green-button">Green</button>
+    <button class="button black" id="black-button">Black</button>
+
+    <script>
+        document.querySelector('#red-button').addEventListener('click', function() {
+            document.querySelector('#hello-world').style.color = 'red';
+        });
+
+        document.querySelector('#green-button').addEventListener('click', function() {
+            document.querySelector('#hello-world').style.color = 'green';
+        });
+
+        document.querySelector('#black-button').addEventListener('click', function() {
+            document.querySelector('#hello-world').style.color = 'black';
+        });
+    </script>
+</body>
+</html>
