@@ -25,20 +25,4 @@ pip install -r requirements.txt
 python Quiz.py
 ```
 
-### Node/Next.js files
 
-1. Install packages:
-
-```bash
-npm install
-```
-
-2. Run development server:
-
-```bash
-npm run dev
-```
-
-## Repository goal
-
-This repo is used to keep learning consistent through frequent, practical builds.
