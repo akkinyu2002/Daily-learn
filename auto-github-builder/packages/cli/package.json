@@ -1,0 +1,31 @@
+{
+  "name": "@auto-github-builder/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "agb": "dist/bin/agb.js"
+  },
+  "scripts": {
+    "dev": "tsx src/bin/agb.ts",
+    "build": "tsc",
+    "start": "node dist/bin/agb.js",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "axios": "^1.6.0",
+    "inquirer": "^8.2.5",
+    "dotenv": "^16.0.0",
+    "ora": "^7.0.0",
+    "simple-git": "^3.20.0",
+    "conf": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/inquirer": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}
