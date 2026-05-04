@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: agb-db
+    environment:
+      POSTGRES_USER: agb_user
+      POSTGRES_PASSWORD: agb_password
+      POSTGRES_DB: auto_github_builder
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agb_user -d auto_github_builder"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Server
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agb-backend
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://agb_user:agb_password@db:5432/auto_github_builder
+      PORT: 3001
+      JWT_SECRET: development_secret_key
+      GITHUB_API_TOKEN: ${GITHUB_API_TOKEN:-}
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./packages/backend/src:/app/packages/backend/src
+    command: npm run dev --workspace=packages/backend
+
+  # Redis Cache (optional, for future optimization)
+  redis:
+    image: redis:7-alpine
+    container_name: agb-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: agb-network
