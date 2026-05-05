@@ -51,7 +51,7 @@ export class GitHubService {
           {
             headers: {
               Authorization: `token ${token}`,
-              Accept: 'application/vnd.github.v3.raw+json',
+              Accept: 'application/vnd.github.v3+json',
             },
           }
         );
