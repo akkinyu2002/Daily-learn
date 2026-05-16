@@ -19,10 +19,6 @@ A personal repository for daily coding practice and small projects across Python
 pip install -r requirements.txt
 ```
 
-3. Run any script, for example:
 
-```bash
-python Quiz.py
-```
 
 
